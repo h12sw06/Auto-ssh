@@ -1,0 +1,49 @@
+echo "무조건 처음 터미널에 수동 입력해 주십시오"
+echo "sed -i -e 's/\r$//' ./SSH.txt"
+echo
+echo
+echo "수동으로 입력 하였다면 ENTER"
+echo -n "그렇지 않으면 터미널 닫거나 Ctrl+C 입력후 다시실행"
+read
+#--------------------------------------------------------------------------------
+
+#!/bin/sh
+
+apt-get update
+apt-get upgrade -y
+
+apt-get install nano
+apt-get install openssh-server
+apt-get install net-tools
+
+nano /etc/ssh/sshd_config
+
+echo ##### 입력할 내용 #####
+echo LoginGraceTime 120
+echo PermitRootLogin yes
+echo StrictModes yes
+echo
+echo RSAAuthentication yes
+echo PubkeyAuthentication yes
+echo ######################
+
+#------ 자동입력 ------
+
+awk 'NR==30{$0="\n \
+LoginGraceTime 120\n \
+PermitRootLogin yes\n \
+StrictModes yes\n \
+\n \
+RSAAuthentication yes\n \
+PubkeyAuthentication yes\n \
+"}1' /etc/ssh/sshd_config > /etc/ssh/sshd_config2 
+
+#---------------------
+
+cp /etc/ssh/sshd_config2 /etc/ssh/sshd_config
+nano /etc/ssh/sshd_config
+
+service ssh restart
+
+ifconfig
+
